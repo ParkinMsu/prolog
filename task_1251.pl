@@ -1,22 +1,26 @@
+%Parkin Alexander 424
 
+%main function
 start(S) :- sentence(TREE,S,_), 
 			add_empty(TREE, NORM_TREE), 
 			draw_picture(NORM_TREE)
 			.
 
+%tree nodes normalize
 add_empty(empty,empty):-!.
 add_empty(node(X,L,R),node(X,NORML,NORMR)) :- 	parse(L,L2),
 												parse(R,R2),
 												add_empty(L2,NORML),
 												add_empty(R2,NORMR),
-												!
-												.
+												!.
 
 parse(empty,empty).
 parse(node(X,L),node(X,L,empty)).
 parse(node(X,L,R),node(X,L,R)).
 parse(X,node(X,empty,empty)).
 
+
+%GUI
 draw_picture(Tree) :- 
 	new(Picture, picture('Обработка естественного языка')), 
 	WIDTH is 5000, HEIGHT is 1000,
@@ -58,8 +62,9 @@ draw(node(X, L, R), LeftBound, RightBount, Top, Picture) :-
 	.
 
 
+%sentence parsing
 sentence(V) --> sentence(_,V).
-sentence(X,node(предложение, NP, VP)) --> group_nouns(X,'именительный', NP), group_verb(X, VP).
+sentence(X,node(предложение, NP, VP)) --> group_nouns(X,'именительный', SP, NP), group_verb(X, SP, VP).
 
 group_nouns(X,CASE,node(группасуществительных, DETERMINATE, NOUN)) --> determinate_group(X, CASE, DETERMINATE), noun(X, CASE, NOUN).
 group_nouns(X,CASE,node(группасуществительных, NOUN)) --> noun(X, CASE, NOUN).
@@ -76,6 +81,8 @@ group_next_nouns(X, node(группасуществительных, NOUN)) --> group_other_nouns(X, 
 
 group_other_nouns(X, node(группасуществительных, EXCUSE, NOUNS)) --> excuse(X, CASE, EXCUSE), group_nouns(X, CASE, NOUNS).
 
+
+%rules
 excuse(_,'родительный', node(предлог, с)) --> [с].
 excuse(_,'родительный', node(предлог, по)) --> [по].
 excuse(_,'родительный', node(предлог, без)) --> [без].
